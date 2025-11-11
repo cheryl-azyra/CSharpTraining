@@ -1,0 +1,96 @@
+﻿using System;
+using System.IO;
+using System.Threading;
+
+
+namespace HashValues
+{
+    internal class HashFile
+    {
+        static void Main(string[] args)
+        {
+            // Set some variables
+            var basePath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Hawthorn Xerox Sample OPO files"));
+            var sourcePath = Path.Combine(basePath, "Input");
+            var destinationPath = Path.Combine(basePath, "Output");
+
+            // Check source directory exists - if not exit. 
+            if (!Directory.Exists(sourcePath))
+            {
+                Console.WriteLine($"Source Directory not found: {sourcePath}");
+                Console.WriteLine($"Exiting program in 30 seconds");
+                Thread.Sleep(30000);
+                Environment.Exit(0);
+
+            }
+
+            // Create destination directory if it doesn't exist
+            if (!Directory.Exists(destinationPath))
+            {
+                Directory.CreateDirectory(destinationPath);
+            }
+
+            // Find each file in source directly and generate hash
+            foreach (var file  in Directory.GetFiles(sourcePath))
+            {
+               var result =  GenerateHashedFile(sourcePath, Path.GetFileName(file), destinationPath);
+               Console.WriteLine(result);
+            }
+
+            Console.WriteLine($"Completed Hash Program. Will close in 30 seconds");
+            Thread.Sleep(30000);
+
+        }
+
+        // Take a source file,generate a hashed version, and save to destination.
+        // Generate Hash by taking the sum of (position * ascii encoding) for each character on line
+        public static string GenerateHashedFile(string sourcePath, string fileName, string destinationPath)
+        {
+            var sourceFile = Path.Combine(sourcePath, fileName);
+            var lines = File.ReadAllLines(sourceFile);
+            var destinationFile = Path.Combine(destinationPath, fileName+"H");
+            var result = "";
+             
+            // check file is not blank
+            if (lines.Length == 0)
+            {
+                result = $"No data found in file: {sourceFile}";
+                return result;
+            }
+            else
+            {
+                //  process file and create hased version
+                using (StreamWriter writer = new StreamWriter(destinationFile, append: true))
+                {
+                    try
+                    {
+                        foreach (var line in lines)
+                        {
+                            var hashLine = line;
+                            var hash = 0;
+                            // calculate hash for each charcter
+                            for (int i = 0; i < line.Length; i++)
+                            {
+                                var pos = i + 1;
+                                var ascii = (int)line[i];
+                                hash = hash + (pos * ascii);
+
+                            }
+                            hashLine = hashLine.TrimEnd() + "#" + hash.ToString();
+                            writer.WriteLine(hashLine);
+
+                        }
+                        result = $"Generated Hashed File: {destinationFile}";
+                    }
+                    catch (Exception e)
+                    {
+                        return $"Error: {e.Message} Parsing file:{sourceFile} ";
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+    }
+}
