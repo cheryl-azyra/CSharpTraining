@@ -24,11 +24,7 @@ namespace HashValues
 
             }
 
-            // Create destination directory if it doesn't exist
-            if (!Directory.Exists(destinationPath))
-            {
-                Directory.CreateDirectory(destinationPath);
-            }
+            Directory.CreateDirectory(destinationPath);
 
             // Find each file in source directly and generate hash
             foreach (string file  in Directory.GetFiles(sourcePath))
@@ -59,27 +55,18 @@ namespace HashValues
             }
             else
             {
-                //  process file and create hased version
-                using (StreamWriter writer = new StreamWriter(destinationFile, append: true))
+                //  Process file and create hashed version
+                using (StreamWriter writer = new StreamWriter(destinationFile))
                 {
                     try
                     {
                         foreach (string line in lines)
                         {
-                            var hashLine = line;
-                            var hash = 0;
-                            // calculate hash for each charcter
-                            for (int i = 0; i < line.Length; i++)
-                            {
-                                var pos = i + 1;
-                                var ascii = (int)line[i];
-                                hash = hash + (pos * ascii);
-
-                            }
-                            hashLine = hashLine.TrimEnd() + "#" + hash.ToString();
-                            writer.WriteLine(hashLine);
+                       
+                            writer.WriteLine(line.TrimEnd() + "#" + GetHashStringValue(line.TrimEnd()));
 
                         }
+
                         result = $"Generated Hashed File: {destinationFile}";
                     }
                     catch (Exception e)
@@ -92,5 +79,17 @@ namespace HashValues
             return result;
         }
 
+        // Get hashed value of the line
+        public static string GetHashStringValue(string line)
+        {
+            var hash = 0;
+            // Calculate hash for each charcter
+            for (int i = 0; i < line.Length; i++)
+            {
+                hash +=  ((i + 1) * (int)line[i]);
+
+            }
+            return hash.ToString();
+        }
     }
 }
