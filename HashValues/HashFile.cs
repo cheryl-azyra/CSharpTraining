@@ -31,7 +31,7 @@ namespace HashValues
             }
 
             // Find each file in source directly and generate hash
-            foreach (var file  in Directory.GetFiles(sourcePath))
+            foreach (string file  in Directory.GetFiles(sourcePath))
             {
                var result =  GenerateHashedFile(sourcePath, Path.GetFileName(file), destinationPath);
                Console.WriteLine(result);
@@ -64,7 +64,7 @@ namespace HashValues
                 {
                     try
                     {
-                        foreach (var line in lines)
+                        foreach (string line in lines)
                         {
                             var hashLine = line;
                             var hash = 0;
