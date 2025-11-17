@@ -14,7 +14,7 @@ namespace HashFilesLib
             var fileCount = 0;
 
             // Check inputs are not null
-            if (sourcePath == "" || destinationPath == "")
+            if (string.IsNullOrEmpty(sourcePath) || string.IsNullOrEmpty(destinationPath))
             {
                 return "Error: Please enter both a Source and Destination Path";
             }

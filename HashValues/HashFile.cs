@@ -23,7 +23,7 @@ namespace HashValues
                 Console.WriteLine("Enter the Source Directory (or 'exit' to exit): ");
                 sourcePath = Console.ReadLine();
 
-                if(sourcePath.ToLower() =="exit")
+                if(string.Equals(sourcePath.ToLower(),"exit"))
                 {
                     Console.WriteLine("Exiting program...");
                     Environment.Exit(0);
